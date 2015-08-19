@@ -1,0 +1,94 @@
+﻿@model ASPNET.MVC.Actions.Models.Car
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<style>
+    .model-status {
+        padding: 10px;
+        border: 1px solid #b200ff;
+    }
+
+    #btn-sendForm {
+        display: inline-block;
+        padding: 12px;
+        margin: 10px 0;
+        background: #b200ff;
+        color: #fff;
+    }
+
+</style>
+
+<h2>Create</h2>
+
+@using (Html.BeginForm("Create", "Car", FormMethod.Post, htmlAttributes: new { id = "car-form"} ) )
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Car</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Brand, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Brand, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Brand, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Model, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Model, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Model, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Color, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Color, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Color, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Units, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Units, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Units, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="model-status">Estado @Model.Status</div>
+
+        <a id="btn-sendForm" href="#">Enviar modelo</a>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $('#btn-sendForm').click(function () {
+            var formContainer = $('#car-form');
+            $.ajax({
+                url: '@Url.Action("Create", "Car")',
+                type: 'POST',
+                cache: false,
+                data: formContainer.serialize(),
+                success: function (result) {
+                    var modelStatus = $('.model-status');
+                    if (result)
+                        modelStatus.text("Estado: Enviado con éxito");
+                    else
+                        modelStatus.text("Estado: Enviado con error. Compruebe que ha rellenado todos los campos");
+                },
+                error: function (jqXHR, textStatus, error) {
+                    $('.model-status').text("Estado: Error inesperado");
+                }
+            });
+        });
+    </script>
+}
